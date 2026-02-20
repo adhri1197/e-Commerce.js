@@ -19,7 +19,7 @@ const userSchema =  mongoose.Schema({
         default: []
     },
     contact: Number,
-    picture: dp
+ 
 });
 
 module.exports = mongoose.model("user", userSchema); 

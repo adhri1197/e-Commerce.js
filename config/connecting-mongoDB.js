@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
+const config = require("config");
+const dbgr = require("debug")("development:mongoose");
 
 mongoose
-.connect("mongodb://localhost:27017/potlistore")
+.connect(`${config.get("MONGODB_URI")}/potlistore`)
 .then(function(){
-console.log("Connected to MongoDB successfully");
-})
+dbgr("connected")})
 
 .catch(function(err){
-    console.log(err)
+    dbgr(err)
 })
 
 module.exports = mongoose.connection;
