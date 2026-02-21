@@ -67,4 +67,37 @@ exports.registerUser =  async function (req, res) {
         });
     }
 }
+ 
+exports.loginUser = async function (req, res) {
+    try {
+        let { email, password } = req.body;
 
+        if (!email || !password) {
+            return res.status(400).send("Email and password are required");
+        }
+
+        let user = await userModel.findOne({ email });
+        if (!user) {
+            return res.status(400).send("User not found");
+        }
+
+        let isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).send("Invalid credentials");
+        }
+
+        const token = generateToken(user);
+
+        res.cookie("token", token, { httpOnly: true });
+        res.send("Login successful");
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server error");
+    }
+};
+
+exports.logoutUser = function (req, res){
+    res.cookies("token", "")
+    res.redirect("/")
+}
