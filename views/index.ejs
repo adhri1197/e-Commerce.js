@@ -1,46 +1,163 @@
 <%- include('./partials/header') %>
 
-    <% if(error && error.length>0){ %>
-        <div class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-red-500">
-            <span class="inline-block mt-1 mb-1 text-white">
-                <%= error %>
-            </span>
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 relative overflow-hidden">
+
+    <!-- ✅ FLASH MESSAGE -->
+    <% if (error && error.length > 0) { %>
+    <div id="flash-message" class="absolute top-6 right-6 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-500">
+        <%= error[0] %>
+    </div>
+    <% } %>
+
+    <% if (success && success.length > 0) { %>
+    <div id="flash-message" class="absolute top-6 right-6 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-500">
+        <%= success[0] %>
+    </div>
+    <% } %>
+
+    <!-- Heading -->
+    <div class="text-center mb-10 z-10">
+        <h1 class="text-5xl font-bold text-white mr-10">
+            Welcome to <span class="text-yellow-300">Potli Studio</span>
+        </h1>
+    </div>
+
+    <!-- Background Glow Effects -->
+    <div class="absolute w-[500px] h-[500px] bg-pink-500 opacity-30 blur-3xl rounded-full top-[-150px] left-[-150px] animate-pulse"></div>
+    <div class="absolute w-[500px] h-[500px] bg-blue-500 opacity-30 blur-3xl rounded-full bottom-[-150px] right-[-150px] animate-pulse"></div>
+
+    <!-- Main Card -->
+    <div class="relative w-[1000px] h-[550px] rounded-3xl shadow-2xl flex overflow-hidden backdrop-blur-xl">
+
+        <!-- Sliding Glass Panel -->
+        <div id="glassPanel"
+            class="absolute top-0 left-0 w-1/2 h-full bg-white/20 backdrop-blur-xl rounded-3xl shadow-2xl transition-all duration-700 ease-in-out z-10">
         </div>
-        <% } %>
-            <div class="w-full h-screen flex px-20">
-                <div class="w-1/2 flex items-center justify-center h-screen">
-                    <div class="w-full px-32">
-                        <h3 class="text-4xl">welcome to <span class="text-blue-400 font-semibold">Scatch</span></h3>
-                        <h4 class="text-2xl mb-5">create your account</h4>
-                        <form autocomplete="off" action="/users/register" method="post">
-                            <input
-                                class="bg-zinc-100 block w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
-                                type="text" placeholder="Full Name" name="fullname">
-                            <input
-                                class="bg-zinc-100 block w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
-                                type="email" placeholder="Email" name="email">
-                            <input
-                                class="bg-zinc-100 block w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
-                                type="password" placeholder="Password" name="password">
-                            <input class="px-5 rounded-full py-3 mt-2 bg-blue-500 text-white" type="submit"
-                                value="Create My Account">
-                        </form>
-                    </div>
-                </div>
-                <div class="w-1/2 flex items-center justify-center h-screen">
-                    <div class="w-full px-32">
-                        <h4 class="text-2xl capitalize mb-5">login your account</h4>
-                        <form autocomplete="off" action="/users/login" method="post">
-                            <input
-                                class="block bg-zinc-100 w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
-                                type="email" placeholder="Email" name="email">
-                            <input
-                                class="block bg-zinc-100 w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
-                                type="password" placeholder="Password" name="password">
-                            <input class="px-5 block rounded-full py-3 mt-2 bg-blue-500 text-white" type="submit"
-                                value="Login">
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <%- include('./partials/footer') %>
+
+        <!-- REGISTER -->
+        <div id="registerContainer"
+            class="relative w-1/2 h-full flex flex-col justify-center items-center p-16 transition-all duration-500 z-20">
+
+            <h2 class="text-4xl font-bold text-white mb-8">Create Account</h2>
+
+            <form id="registerForm" action="/users/register" method="post" class="w-full space-y-6">
+                <input type="text" name="fullname" placeholder="Full Name"
+                    class="w-full px-5 py-3 rounded-lg bg-white shadow-md focus:ring-2 focus:ring-indigo-500 outline-none transition">
+
+                <input type="email" name="email" placeholder="Email"
+                    class="w-full px-5 py-3 rounded-lg bg-white shadow-md focus:ring-2 focus:ring-indigo-500 outline-none transition">
+
+                <input type="password" name="password" placeholder="Password"
+                    class="w-full px-5 py-3 rounded-lg bg-white shadow-md focus:ring-2 focus:ring-indigo-500 outline-none transition">
+
+                <button
+                    class="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full shadow-lg hover:scale-105 active:scale-95 transition">
+                    Create Account
+                </button>
+            </form>
+
+            <p class="text-white mt-8">
+                Already have an account?
+                <button onclick="togglePanel()" class="underline font-semibold">Login</button>
+            </p>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="loginContainer"
+            class="relative w-1/2 h-full flex flex-col justify-center items-center p-16 transition-all duration-500 z-20">
+
+            <h2 class="text-4xl font-bold text-gray-800 mb-8">Welcome Back</h2>
+
+            <form id="loginForm" action="/users/login" method="post" class="w-full space-y-6">
+                <input type="email" name="email" placeholder="Email"
+                    class="w-full px-5 py-3 rounded-lg bg-white shadow-md focus:ring-2 focus:ring-purple-500 outline-none transition">
+
+                <input type="password" name="password" placeholder="Password"
+                    class="w-full px-5 py-3 rounded-lg bg-white shadow-md focus:ring-2 focus:ring-purple-500 outline-none transition">
+
+                <button
+                    class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full shadow-lg hover:scale-105 active:scale-95 transition">
+                    Login
+                </button>
+            </form>
+
+            <p class="text-gray-700 mt-8">
+                Don’t have an account?
+                <button onclick="togglePanel()" class="underline font-semibold">Register</button>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let isLogin = false;
+
+    const glassPanel = document.getElementById("glassPanel");
+    const registerForm = document.getElementById("registerForm");
+    const loginForm = document.getElementById("loginForm");
+    const registerContainer = document.getElementById("registerContainer");
+    const loginContainer = document.getElementById("loginContainer");
+
+    function togglePanel() {
+
+        if (!isLogin) {
+            glassPanel.style.left = "50%";
+            enableForm(loginForm);
+            disableForm(registerForm);
+
+            loginContainer.style.transform = "scale(1.03)";
+            loginContainer.style.zIndex = "30";
+            registerContainer.style.transform = "scale(0.95)";
+            registerContainer.style.zIndex = "10";
+
+            loginContainer.querySelector("h2").classList.replace("text-gray-800","text-white");
+            registerContainer.querySelector("h2").classList.replace("text-white","text-gray-800");
+
+        } else {
+            glassPanel.style.left = "0%";
+            enableForm(registerForm);
+            disableForm(loginForm);
+
+            registerContainer.style.transform = "scale(1.03)";
+            registerContainer.style.zIndex = "30";
+            loginContainer.style.transform = "scale(0.95)";
+            loginContainer.style.zIndex = "10";
+
+            registerContainer.querySelector("h2").classList.replace("text-gray-800","text-white");
+            loginContainer.querySelector("h2").classList.replace("text-white","text-gray-800");
+        }
+
+        isLogin = !isLogin;
+    }
+
+    function disableForm(form) {
+        form.querySelectorAll("input, button").forEach(el => el.disabled = true);
+        form.style.opacity = "0.6";
+        form.style.pointerEvents = "none";
+    }
+
+    function enableForm(form) {
+        form.querySelectorAll("input, button").forEach(el => el.disabled = false);
+        form.style.opacity = "1";
+        form.style.pointerEvents = "auto";
+    }
+
+    disableForm(loginForm);
+    registerContainer.style.transform = "scale(1.03)";
+    loginContainer.style.transform = "scale(0.95)";
+
+    // Flash msg
+    const flashMessage = document.getElementById("flash-message");
+
+    if (flashMessage) {
+        setTimeout(() => {
+            flashMessage.style.opacity = "0";
+            setTimeout(() => {
+                flashMessage.remove();
+            }, 500);
+        }, 10000); // 10000ms = 10 seconds
+    }
+</script>
+
+<%- include('./partials/footer') %>

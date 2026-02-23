@@ -10,35 +10,27 @@ exports.registerUser =  async function (req, res) {
 
         //  Check if all fields are provided
         if (!fullname || !email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: "Fullname, email and password are required"
-            });
+            req.flash("error", "All fields are required");
+            return res.redirect("/")
         }
 
         // Validate email format
         if (!validator.isEmail(email)) {
-            return res.status(400).json({
-                success: false,
-                message: "Invalid email format"
-            });
+            req.flash("error", "Invalid email format");
+            return res.redirect("/")
         }
 
         // Validate password strength
         if (password.length < 8) {
-            return res.status(400).json({
-                success: false,
-                message: "Password must be at least 8 characters long"
-            });
+            req.flash("error", "Password must be at least 8 characters long");
+            return res.redirect("/")
         }
 
         // Check if user already exists
         let existingUser = await userModel.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({
-                success: false,
-                message: "User already exists with this email"
-            });
+            req.flash("error", "User already exists with this email");
+            return res.redirect("/")
         }
 
         // Hash password
@@ -56,15 +48,14 @@ exports.registerUser =  async function (req, res) {
         user.password = undefined;
         let token = generateToken(user);
         res.cookie("token", token, { httpOnly: true });
-        res.send("user created successfully")
-        
+       
+        req.flash("success", "Registration successful");
+        return res.redirect("/");        
 
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({
-            success: false,
-            message: "Server error"
-        });
+       res.flash("error", "Server error");
+       return res.redirect("/")
     }
 }
  
@@ -73,31 +64,37 @@ exports.loginUser = async function (req, res) {
         let { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).send("Email and password are required");
+            req.flash("error", "Email and password are required");
+            return res.redirect("/");
         }
 
         let user = await userModel.findOne({ email });
         if (!user) {
-            return res.status(400).send("User not found");
+            req.flash("error", "User not found");
+            return res.redirect("/");
         }
 
         let isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).send("Invalid credentials");
+            req.flash("error", "Invalid credentials");
+            return res.redirect("/");
         }
 
         const token = generateToken(user);
 
+        req.flash("success", "Login successful");
         res.cookie("token", token, { httpOnly: true });
-        res.send("Login successful");
+        return res.redirect("/shop");
 
     } catch (err) {
         console.error(err);
-        res.status(500).send("Server error");
+        req.flash("error", "Server error");
+        return res.redirect("/");
     }
 };
 
 exports.logoutUser = function (req, res){
-    res.cookies("token", "")
+    res.clearCookie("token");
+    req.flash("success", "Logged out successfully");
     res.redirect("/")
 }
